@@ -1,7 +1,7 @@
 package maps
 
 type UnorderedMap[K comparable, V any] struct {
-	AbstractMap[K, V]
+	*DefaultAbstractMap[K, V]
 	m map[K]V
 }
 
@@ -9,7 +9,7 @@ func NewUnorderedMap[K comparable, V any]() *UnorderedMap[K, V] {
 	m := &UnorderedMap[K, V]{
 		m: map[K]V{},
 	}
-	m.AbstractMap = NewAbstractMap(m)
+	m.DefaultAbstractMap = NewDefaultAbstractMap(m)
 	return m
 }
 

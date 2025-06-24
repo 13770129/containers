@@ -16,17 +16,17 @@ type AbstractMap[K, V any] interface {
 	Swap(key K, value V) (previous V, loaded bool)
 }
 
-type defaultAbstractMap[K, V any] struct {
+type DefaultAbstractMap[K, V any] struct {
 	impl AbstractMap[K, V]
 }
 
-func NewAbstractMap[K, V any](impl AbstractMap[K, V]) AbstractMap[K, V] {
-	return &defaultAbstractMap[K, V]{
+func NewDefaultAbstractMap[K, V any](impl AbstractMap[K, V]) *DefaultAbstractMap[K, V] {
+	return &DefaultAbstractMap[K, V]{
 		impl: impl,
 	}
 }
 
-func (m *defaultAbstractMap[K, V]) Clear() {
+func (m *DefaultAbstractMap[K, V]) Clear() {
 	var keys []K
 	for key := range m.impl.Range {
 		keys = append(keys, key)
@@ -36,7 +36,7 @@ func (m *defaultAbstractMap[K, V]) Clear() {
 	}
 }
 
-func (m *defaultAbstractMap[K, V]) CompareAndDelete(key K, old V) (deleted bool) {
+func (m *DefaultAbstractMap[K, V]) CompareAndDelete(key K, old V) (deleted bool) {
 	value, ok := m.impl.Load(key)
 	if !ok {
 		return false
@@ -49,7 +49,7 @@ func (m *defaultAbstractMap[K, V]) CompareAndDelete(key K, old V) (deleted bool)
 	return false
 }
 
-func (m *defaultAbstractMap[K, V]) CompareAndSwap(key K, old, new V) (swapped bool) {
+func (m *DefaultAbstractMap[K, V]) CompareAndSwap(key K, old, new V) (swapped bool) {
 	value, ok := m.impl.Load(key)
 	if !ok {
 		return false
@@ -62,11 +62,11 @@ func (m *defaultAbstractMap[K, V]) CompareAndSwap(key K, old, new V) (swapped bo
 	return false
 }
 
-func (m *defaultAbstractMap[K, V]) Delete(key K) {
+func (m *DefaultAbstractMap[K, V]) Delete(key K) {
 	panic("not implemented")
 }
 
-func (m *defaultAbstractMap[K, V]) Len() int {
+func (m *DefaultAbstractMap[K, V]) Len() int {
 	var len int
 	for range m.impl.Range {
 		len += 1
@@ -74,11 +74,11 @@ func (m *defaultAbstractMap[K, V]) Len() int {
 	return len
 }
 
-func (m *defaultAbstractMap[K, V]) Load(key K) (value V, ok bool) {
+func (m *DefaultAbstractMap[K, V]) Load(key K) (value V, ok bool) {
 	panic("not implemented")
 }
 
-func (m *defaultAbstractMap[K, V]) LoadAndDelete(key K) (value V, loaded bool) {
+func (m *DefaultAbstractMap[K, V]) LoadAndDelete(key K) (value V, loaded bool) {
 	value, loaded = m.impl.Load(key)
 	if loaded {
 		m.impl.Delete(key)
@@ -86,7 +86,7 @@ func (m *defaultAbstractMap[K, V]) LoadAndDelete(key K) (value V, loaded bool) {
 	return value, loaded
 }
 
-func (m *defaultAbstractMap[K, V]) LoadOrStore(key K, value V) (actual V, loaded bool) {
+func (m *DefaultAbstractMap[K, V]) LoadOrStore(key K, value V) (actual V, loaded bool) {
 	actual, loaded = m.impl.Load(key)
 	if !loaded {
 		m.impl.Store(key, value)
@@ -95,11 +95,11 @@ func (m *defaultAbstractMap[K, V]) LoadOrStore(key K, value V) (actual V, loaded
 	return actual, loaded
 }
 
-func (m *defaultAbstractMap[K, V]) Range(f func(key K, value V) bool) {
+func (m *DefaultAbstractMap[K, V]) Range(f func(key K, value V) bool) {
 	panic("not implemented")
 }
 
-func (m *defaultAbstractMap[K, V]) Keys(f func(key K) bool) {
+func (m *DefaultAbstractMap[K, V]) Keys(f func(key K) bool) {
 	for key := range m.impl.Range {
 		if !f(key) {
 			break
@@ -107,7 +107,7 @@ func (m *defaultAbstractMap[K, V]) Keys(f func(key K) bool) {
 	}
 }
 
-func (m *defaultAbstractMap[K, V]) Values(f func(value V) bool) {
+func (m *DefaultAbstractMap[K, V]) Values(f func(value V) bool) {
 	for _, value := range m.impl.Range {
 		if !f(value) {
 			break
@@ -115,11 +115,7 @@ func (m *defaultAbstractMap[K, V]) Values(f func(value V) bool) {
 	}
 }
 
-func (m *defaultAbstractMap[K, V]) Store(key K, value V) {
-	panic("not implemented")
-}
-
-func (m *defaultAbstractMap[K, V]) Swap(key K, value V) (previous V, loaded bool) {
+func (m *DefaultAbstractMap[K, V]) Swap(key K, value V) (previous V, loaded bool) {
 	previous, loaded = m.impl.Load(key)
 	m.impl.Store(key, value)
 	return previous, loaded
