@@ -180,6 +180,11 @@ func testAdvancedOperations[K comparable, V comparable](t *testing.T, factory Ma
 		if loaded {
 			t.Error("Expected loaded=false for swap on empty map")
 		}
+		// Since this is a non-existent key, previous should be the zero value
+		var zero V
+		if previous != zero {
+			t.Errorf("Expected zero value for previous on non-existent key, got %v", previous)
+		}
 
 		if value, ok := m.Load(firstCase.Key); !ok || value != newValue {
 			t.Errorf("Expected new value %v to be stored", newValue)
@@ -452,8 +457,7 @@ func testEdgeCases[K comparable, V comparable](t *testing.T, factory MapFactory[
 	})
 }
 
-// Example test functions demonstrating usage with specific implementations.
-
+// Test functions demonstrating usage with specific implementations.
 func TestUnorderedMapString(t *testing.T) {
 	factory := func() maps.AbstractMap[string, string] {
 		return maps.NewUnorderedMap[string, string]()
