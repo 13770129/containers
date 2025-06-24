@@ -62,20 +62,12 @@ func (m *DefaultAbstractMap[K, V]) CompareAndSwap(key K, old, new V) (swapped bo
 	return false
 }
 
-func (m *DefaultAbstractMap[K, V]) Delete(key K) {
-	panic("not implemented")
-}
-
 func (m *DefaultAbstractMap[K, V]) Len() int {
 	var len int
 	for range m.impl.Range {
 		len += 1
 	}
 	return len
-}
-
-func (m *DefaultAbstractMap[K, V]) Load(key K) (value V, ok bool) {
-	panic("not implemented")
 }
 
 func (m *DefaultAbstractMap[K, V]) LoadAndDelete(key K) (value V, loaded bool) {
@@ -93,10 +85,6 @@ func (m *DefaultAbstractMap[K, V]) LoadOrStore(key K, value V) (actual V, loaded
 		actual = value
 	}
 	return actual, loaded
-}
-
-func (m *DefaultAbstractMap[K, V]) Range(f func(key K, value V) bool) {
-	panic("not implemented")
 }
 
 func (m *DefaultAbstractMap[K, V]) Keys(f func(key K) bool) {
