@@ -20,20 +20,22 @@ type AbstractMap[Key, Value any] interface {
 	Swap(key Key, value Value) (previous Value, loaded bool)
 }
 
-func FromGoMaps[Key comparable, Value any](m AbstractMap[Key, Value], gms ...map[Key]Value) {
+func FromGoMaps[Key comparable, Value any, Map AbstractMap[Key, Value]](m Map, gms ...map[Key]Value) Map {
 	for _, gm := range gms {
 		for k, v := range gm {
 			m.Store(k, v)
 		}
 	}
+	return m
 }
 
-func FromAbstractMap[Key, Value any](m AbstractMap[Key, Value], ams ...AbstractMap[Key, Value]) {
+func FromAbstractMaps[Key, Value any, Map AbstractMap[Key, Value]](m Map, ams ...AbstractMap[Key, Value]) Map {
 	for _, am := range ams {
 		for k, v := range am.Range {
 			m.Store(k, v)
 		}
 	}
+	return m
 }
 
 type DefaultAbstractMap[Key, Value any] struct {
