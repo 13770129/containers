@@ -1,39 +1,39 @@
 package maps
 
-type UnorderedMap[K comparable, V any] struct {
-	*DefaultAbstractMap[K, V]
-	m map[K]V
+type UnorderedMap[Key comparable, Value any] struct {
+	*DefaultAbstractMap[Key, Value]
+	m map[Key]Value
 }
 
-func NewUnorderedMap[K comparable, V any]() *UnorderedMap[K, V] {
-	m := &UnorderedMap[K, V]{
-		m: map[K]V{},
+func NewUnorderedMap[Key comparable, Value any]() *UnorderedMap[Key, Value] {
+	um := &UnorderedMap[Key, Value]{
+		m: map[Key]Value{},
 	}
-	m.DefaultAbstractMap = NewDefaultAbstractMap(m)
-	return m
+	um.DefaultAbstractMap = NewDefaultAbstractMap(um)
+	return um
 }
 
-func (m *UnorderedMap[K, V]) Delete(key K) {
-	delete(m.m, key)
+func (um *UnorderedMap[Key, Value]) Delete(key Key) {
+	delete(um.m, key)
 }
 
-func (m *UnorderedMap[K, V]) Len() int {
-	return len(m.m)
+func (um *UnorderedMap[Key, Value]) Len() int {
+	return len(um.m)
 }
 
-func (m *UnorderedMap[K, V]) Load(key K) (value V, ok bool) {
-	value, ok = m.m[key]
+func (um *UnorderedMap[Key, Value]) Load(key Key) (value Value, ok bool) {
+	value, ok = um.m[key]
 	return value, ok
 }
 
-func (m *UnorderedMap[K, V]) Range(f func(key K, value V) bool) {
-	for k, v := range m.m {
+func (um *UnorderedMap[Key, Value]) Range(f func(key Key, value Value) bool) {
+	for k, v := range um.m {
 		if !f(k, v) {
 			break
 		}
 	}
 }
 
-func (m *UnorderedMap[K, V]) Store(key K, value V) {
-	m.m[key] = value
+func (um *UnorderedMap[Key, Value]) Store(key Key, value Value) {
+	um.m[key] = value
 }

@@ -1,33 +1,53 @@
 package maps
 
-type AbstractMap[K, V any] interface {
+type MapOps[Key, Value any] interface {
+	Delete(key Key)
+	Load(key Key) (value Value, ok bool)
+	Range(f func(key Key, value Value) bool)
+	Store(key Key, value Value)
+}
+
+type AbstractMap[Key, Value any] interface {
+	MapOps[Key, Value]
 	Clear()
-	CompareAndDelete(key K, old V) (deleted bool)
-	CompareAndSwap(key K, old, new V) (swapped bool)
-	Delete(key K)
-	Len() (len int)
-	Load(key K) (value V, ok bool)
-	LoadAndDelete(key K) (value V, loaded bool)
-	LoadOrStore(key K, value V) (actual V, loaded bool)
-	Range(f func(key K, value V) bool)
-	Keys(f func(key K) bool)
-	Values(f func(value V) bool)
-	Store(key K, value V)
-	Swap(key K, value V) (previous V, loaded bool)
+	CompareAndDelete(key Key, old Value) (deleted bool)
+	CompareAndSwap(key Key, old, new Value) (swapped bool)
+	Len() int
+	LoadAndDelete(key Key) (value Value, loaded bool)
+	LoadOrStore(key Key, value Value) (actual Value, loaded bool)
+	Keys(f func(key Key) bool)
+	Values(f func(value Value) bool)
+	Swap(key Key, value Value) (previous Value, loaded bool)
 }
 
-type DefaultAbstractMap[K, V any] struct {
-	impl AbstractMap[K, V]
+func FromGoMaps[Key comparable, Value any](m AbstractMap[Key, Value], gms ...map[Key]Value) {
+	for _, gm := range gms {
+		for k, v := range gm {
+			m.Store(k, v)
+		}
+	}
 }
 
-func NewDefaultAbstractMap[K, V any](impl AbstractMap[K, V]) *DefaultAbstractMap[K, V] {
-	return &DefaultAbstractMap[K, V]{
+func FromAbstractMap[Key, Value any](m AbstractMap[Key, Value], ams ...AbstractMap[Key, Value]) {
+	for _, am := range ams {
+		for k, v := range am.Range {
+			m.Store(k, v)
+		}
+	}
+}
+
+type DefaultAbstractMap[Key, Value any] struct {
+	impl AbstractMap[Key, Value]
+}
+
+func NewDefaultAbstractMap[Key, Value any](impl AbstractMap[Key, Value]) *DefaultAbstractMap[Key, Value] {
+	return &DefaultAbstractMap[Key, Value]{
 		impl: impl,
 	}
 }
 
-func (m *DefaultAbstractMap[K, V]) Clear() {
-	var keys []K
+func (m *DefaultAbstractMap[Key, Value]) Clear() {
+	var keys []Key
 	for key := range m.impl.Range {
 		keys = append(keys, key)
 	}
